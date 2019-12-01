@@ -8,17 +8,8 @@ import numpy as np
 from nltk.corpus import stopwords
 import math
 from matplotlib import pyplot as plt
-def loadData(path):
-    '''
-    read data from several csv files
-    param path(str): the directory of data files
-    return: dataframe
-    '''
-    files = glob.glob(path+'/*.csv')
-    df=pd.concat([pd.read_csv(f) for f in files])
-    return df
 
-
+from load_data import load_data
 
 def average_len(df):
     return df['content_length'].mean()
@@ -69,11 +60,12 @@ def splitDataByTag(confessions):
 
 
 if __name__ == "__main__":
-    path='data'
-    confessions=loadData(path)
+    files = glob.glob('*.xlsx')
+    confessions=load_data(files)
+    print('loaded files:', files    )
     confessions['content_length']=[len(str(x)) for x in confessions.content]
     print(average_len(confessions))
-    confessions['timestamp']=pd.to_datetime(confessions.timestamp)
+    # confessions['timestamp']=pd.to_datetime(confessions.timestamp)
     confessions['yr-week']=confessions.timestamp.dt.strftime('%y-%W')
     confessions['hour']=confessions.timestamp.dt.strftime('%H')
     confessions['yr-month']=confessions.timestamp.dt.strftime('%y-%m')
