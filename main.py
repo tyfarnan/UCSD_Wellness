@@ -76,16 +76,18 @@ if __name__ == "__main__":
   # dist = submissions_over_time(df)
 
   # plot hourly distribution for different parts of the quarter
-  hist_comb = hist_hourly_quarter_edges(df, calendar, 2)
+  hist_comb = hist_hourly_quarter_edges(df, calendar, 3)
   plot_custom(hist_comb, 'line', 
                 title='Hourly Submissions During Start vs End of Quarter', 
-                file='hist_hourly_quarter_edges', xlabel='Hour', ylabel='Count')
+                file='hist_hourly_quarter_edges', xlabel='Hour', ylabel='Count',
+                colors=['tab:green', 'tab:red'])
 
   # plot hourly distribution for different parts of the week
   hist_comb = hist_hourly_weekday_weeked(df)
-  plot_custom(hist_comb, 'bar', 
+  plot_custom(hist_comb, 'line', 
                 title='Hourly Submissions Over the Weekdays', 
-                file='hist_hourly_weekday_weeked', xlabel='Hour', ylabel='Count')
+                file='hist_hourly_weekday_weeked', xlabel='Hour', ylabel='Count',
+                colors=['tab:red', 'tab:green'])
 
   
 

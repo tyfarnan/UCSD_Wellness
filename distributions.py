@@ -162,13 +162,13 @@ def plot_hourly_dist(df, keywords=None, title='Submissions per Hour of Day', fil
   '''
   return plot_histogram(df, 'hour', title=title, file=file, show=show_plots)
 
-def plot_custom(df, plot_type, title=None, file=None, xlabel=None, ylabel=None, show=show_plots):
+def plot_custom(df, plot_type, colors=None, title=None, file=None, xlabel=None, ylabel=None, show=show_plots):
   assert isinstance(df, pd.DataFrame)
   assert hasattr(df.plot, plot_type)
   plot_func = getattr(df.plot, plot_type)
 
   # group by category and generate histogram
-  ax = plot_func()
+  ax = plot_func(color=colors)
   fig = ax.get_figure()
 
   if len(df.index) > 12 and plot_type=='bar':
@@ -184,6 +184,7 @@ def plot_custom(df, plot_type, title=None, file=None, xlabel=None, ylabel=None, 
   if title: ax.set_title(title, size=label_macro_size)
   if xlabel: ax.set_xlabel(xlabel, size=label_macro_size) 
   if ylabel: ax.set_ylabel(ylabel, size=label_macro_size)
+  ax.legend(fontsize='large')
   # generate figure
   fig.tight_layout()
   if file: fig.savefig(file)
