@@ -1,11 +1,14 @@
+import pickle
 import collections
 import pandas as pd
 from pandas import ExcelWriter
 from pandas import ExcelFile
 from collections import defaultdict
 import statistics as stats
+import json
+import datetime as dt
 
-def load_data(files=None, index_time=False):
+def load_data(files=None, index_time=True):
   '''
   loads confessions data from all sheets in excel files and convert to
   pandas dataframe indexed by timestamp
@@ -48,6 +51,33 @@ def load_data(files=None, index_time=False):
     df.sort_values(by=['timestamp'], ascending=True, inplace=True)
 
   return df
+
+def load_calendar(file='academic_calendar.json'):
+  assert isinstance(file, str)
+  # https://realpython.com/python-json/
+  with open(file, "r") as read_file:
+    data = json.load(read_file)
+  assert 'quarters' in data
+  quarters= data['quarters']
+  for quarter in quarters:
+    for key in quarter:
+      try:
+        quarter[key] = dt.datetime.strptime(quarter[key], "%Y-%m-%d")
+      except:
+        pass
+  return quarters
+
+def data_cache(cache_file='cache.dat'):
+  try:
+    df, calendar = pickle.load( open( cache_file, "rb" ) )
+    print("Loaded previous cached data...")
+  except FileNotFoundError:
+    print("Previous data not found.")
+    df = load_data()
+    calendar = load_calendar()
+    pickle.dump( (df, calendar), open( cache_file, "wb" ) )
+    print('Loaded data...')
+  return df, calendar
 
 def split_tags(confessions):
     '''
@@ -92,7 +122,8 @@ def average_len(df):
 
 def combine_tag(tags):
     '''
-    arbitrary function
+    arbitrary filter function
+    testing only
     '''
     for i in range(len(tags)):
         if tags[i] in ['sex','dating']:
