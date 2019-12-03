@@ -27,7 +27,10 @@ def load_data(files=None, index_time=True):
   sheets = list()
   for file in files:
     assert isinstance(file, str)
-    read = pd.read_excel(file, sheet_name=None)
+    try:
+      read = pd.read_excel(file, sheet_name=None)
+    except:
+      read = pd.read_csv(file)
     if isinstance(read, collections.OrderedDict):
       # file has more than one sheet, add em all
       for sheet in read:
@@ -78,6 +81,18 @@ def data_cache(cache_file='cache.dat'):
     pickle.dump( (df, calendar), open( cache_file, "wb" ) )
     print('Loaded data...')
   return df, calendar
+
+def load_corpus(file):
+  '''
+  loads a corpus of words from file
+
+  :param file: file name of the corpus
+  :return: words in list format
+  '''
+  assert isinstance(file, str)
+  with open(file, 'r') as f:
+    words = [line.strip('\n') for line in f]
+  return words
 
 def split_tags(confessions):
     '''

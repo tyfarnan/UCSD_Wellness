@@ -162,7 +162,7 @@ def plot_hourly_dist(df, keywords=None, title='Submissions per Hour of Day', fil
   '''
   return plot_histogram(df, 'hour', title=title, file=file, show=show_plots)
 
-def plot_custom(df, plot_type, colors=None, title=None, file=None, xlabel=None, ylabel=None, show=show_plots):
+def plot_custom(df, plot_type, extra_func=None, colors=None, title=None, file=None, xlabel=None, ylabel=None, show=show_plots):
   assert isinstance(df, pd.DataFrame)
   assert hasattr(df.plot, plot_type)
   plot_func = getattr(df.plot, plot_type)
@@ -175,6 +175,8 @@ def plot_custom(df, plot_type, colors=None, title=None, file=None, xlabel=None, 
     ax.set_xticklabels(df.index, rotation=45)
     # https://stackoverflow.com/questions/20337664/cleanest-way-to-hide-every-nth-tick-label-in-matplotlib-colorbar
     for label in ax.xaxis.get_ticklabels()[::len(df.index)//12]: label.set_visible(False)
+
+  if extra_func: ax = extra_func(ax)
 
   # generate default labels
   if not title: title = 'Total Count'
