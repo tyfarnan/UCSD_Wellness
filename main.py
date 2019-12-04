@@ -113,12 +113,12 @@ if __name__ == "__main__":
   print(df)
 
   # plot overall histograms
-  # plot_weekday_dist(df)
-  # plot_hourly_dist(df)
+  plot_weekday_dist(df)
+  plot_hourly_dist(df)
 
   # plot total submissions over time
-  # dist = submissions_over_time(df)
-  '''
+  dist = submissions_over_time(df)
+  # '''
   # plot hourly distribution for different parts of the quarter
   hist_comb = hist_hourly_quarter_edges(df, calendar, 3)
   plot_custom(hist_comb, 'line', 
@@ -132,7 +132,7 @@ if __name__ == "__main__":
                 title='Hourly Submissions Over the Weekdays', 
                 file='hist_hourly_weekday_weeked', xlabel='Hour', ylabel='Count',
                 colors=['tab:red', 'tab:green'])
-  '''
+  # '''
   # sentiment analysis
   # df_sentiment_total = load_data(['sentiment_analysis.csv'])
   # quarter_spans = list(map(get_quarter_start_end, calendar))
@@ -150,7 +150,7 @@ if __name__ == "__main__":
 
   thirst_words = load_corpus('thirst_corpus.txt')
   df_result = keywords_over_quarters(thirst_words, calendar, df, 
-    title='Thirstiness over typical Quarter', 
+    title='Romantic Attraction over typical Quarter', 
     file='plot_thirst',
     colors=['lightgrey', 'tab:purple'])
   df_collection.append( ('Thirstiness', df_result) )
