@@ -43,9 +43,7 @@ def tag_process(tags):
     if not pd.isnull(tags):
         tags=tags.replace(' ','').split(',')
         return tags
-
-
-
+    
 def splitDataByTag(confessions):
     '''
     read data from several csv files and group them by tags
