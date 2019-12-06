@@ -1,0 +1,11 @@
+school
+high
+college
+year
+classes
+quarter
+beginning
+fall
+gpa
+ucsd
+major
