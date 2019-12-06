@@ -337,18 +337,11 @@ def weekday_diff_senti_plot(confessions):
 
 
 if __name__ == "__main__":
-    
     school_calendar=school_calendar_timestamp()
     sentiments_of_word=load_sentiment_dict()
     confessions=pre_process(sentiments_of_word)
-    #print(confessions.head())
-    #month_plot(confessions)
-    #week_plot(confessions)
-    #weekday_plot(confessions)
-    #hour_plot(confessions)
     sentiment_plot(confessions)
     neg_pos_plot(confessions)
     weekday_diff_senti_plot(confessions)
-    #Winter=confessions.loc[confessions.quarter=='Winter']
-    #plot_day(Winter)
+   
     
