@@ -129,33 +129,6 @@ def clean_text(all_comments, out_name):
 
     out_file.close();
     return None
-
-def prepare_confessions(confessions):
-    """
-    :param confessions: raw confessions
-    :type all_comments: dataframe
-    :returns: None
-    """
-    assert isinstance(confessions, pd.DataFrame)
-    
-    confessions['timestamp']=pd.to_datetime(confessions.timestamp)
-    confessions['weekday']=confessions.timestamp.dt.strftime('%a')
-    confessions['weekday']=pd.Categorical(confessions['weekday'],categories=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],ordered=True)
-    
-    start = time.time();
-    clean_text(confessions['content'], './data/extra_clean_comments.txt')
-    print('Total time: ' + str((time.time() - start)) + ' secs')
-
-    extra_clean_txt_file = r"./data/extra_clean_comments.txt"
-    extra_clean_csv_file = r"extra_clean_comments.csv"
-
-    clean_confessions = txt_to_csv(extra_clean_txt_file, extra_clean_csv_file, header=None)
-    clean_content = clean_confessions[0].tolist()
-
-    return confessions
-
-#     extra_clean_txt_file = r"./data/extra_clean_comments.txt"
-#     extra_clean_csv_file = r"extra_clean_comments.csv"
     
 def compute_pos_neg_scores(clean_content): 
     """""
@@ -193,11 +166,6 @@ def compute_VAD_scores(clean_content, vad_lex):
     :returns: None
     """
     assert isinstance(clean_content, list)
-    
-    #setup vars for VAD lexicon load
-    vad_text_file = r"./data/NRC-VAD-Lexicon.txt"
-    vad_csv_file = r"vad_lex.csv"
-    vad_lex = txt_to_csv(vad_text_file, vad_csv_file, header=0)
     
     #NRC VAD lexicon
     all_VAD_scores = defaultdict(int)
@@ -237,36 +205,15 @@ def compute_nltk_vader_scores(clean_content):
     output.close()
     return None
 
-def plot_vad_weekday_scores(confessions): 
+def plot_vad_weekday_scores(new): 
     """""
 
     :param clean_content: pre-processed confessions
     :type all_comments: list
     :returns: None
     """
-#     assert isinstance(new,pd.DataFrame)
-    assert isinstance(confessions, pd.DataFrame)
-    
-    pkl_file = open('all_VAD_scores.pkl', 'rb')
-    all_VAD_scores = pickle.load(pkl_file)
-    pkl_file.close()
-
-    temp_VAD = pd.DataFrame.from_dict(all_VAD_scores, orient='index', columns=['Valence','Arousal','Dominance'])
-    new = pd.concat([confessions,temp_VAD],axis=1)
-    
-    pkl_file = open('all_nltk_vader_scores.pkl', 'rb')
-    all_nltk_vader_scores = pickle.load(pkl_file)
-    pkl_file.close()
-    
-    nltk_vader = pd.DataFrame.from_dict(all_nltk_vader_scores, orient='index', columns=['neg','neu','pos','compound'])
-
-    df = pd.concat([new,nltk_vader],axis=1)
-
-    df['hour']=confessions.timestamp.dt.strftime('%H')
-    # df.head()
+    assert isinstance(new,pd.DataFrame)
     # calculate total scores and counts
-    
-    
     weekday_valence_sum=new.groupby('weekday')['Valence'].sum()
     weekday_valence_count=new.groupby('weekday')['Valence'].count()
     
@@ -303,35 +250,14 @@ def plot_vad_weekday_scores(confessions):
     plt.show()
     return None
 
-def plot_nltk_vader_scores(confessions):
+def plot_nltk_vader_scores(df):
     """""
 
     :param clean_content: pre-processed confessions
     :type all_comments: list
     :returns: None
     """
-    assert isinstance(confessions,pd.DataFrame)
-    
-    pkl_file = open('all_VAD_scores.pkl', 'rb')
-    all_VAD_scores = pickle.load(pkl_file)
-    pkl_file.close()
-
-    temp_VAD = pd.DataFrame.from_dict(all_VAD_scores, orient='index', columns=['Valence','Arousal','Dominance'])
-    new = pd.concat([confessions,temp_VAD],axis=1)
-    
-    pkl_file = open('all_nltk_vader_scores.pkl', 'rb')
-    all_nltk_vader_scores = pickle.load(pkl_file)
-    pkl_file.close()
-    
-    nltk_vader = pd.DataFrame.from_dict(all_nltk_vader_scores, orient='index', columns=['neg','neu','pos','compound'])
-    nltk_vader.head()
-    df = pd.concat([new,nltk_vader],axis=1)
-
-    df['hour']=confessions.timestamp.dt.strftime('%H')
-    
-    
-    
-    # df.head()
+    assert isinstance(df,pd.DataFrame)
     
     #setup plots
     hour_neg_sum=df.groupby('hour')['neg'].sum()
@@ -461,12 +387,12 @@ def get_top_words(index2word, k, centers, wordvecs):
         closest_words['Cluster #' + str(i)] = [index2word[j] for j in closest_words_idxs[i][0]]
         
     #A DataFrame is generated from the dictionary.
-#     print(closest_words['Cluster #0'])
+    print(closest_words['Cluster #0'])
     df = pd.DataFrame(closest_words);
     df.index = df.index+1
     return df;
 
-def display_cloud(Z,model, cluster_num, cmap, top_words, label=None):
+def display_cloud(cluster_num, cmap, top_words, label=None):
     """""
 
     :param clean_content: pre-processed confessions
@@ -476,10 +402,6 @@ def display_cloud(Z,model, cluster_num, cmap, top_words, label=None):
     assert isinstance(cluster_num, int)
     assert isinstance(cmap, str)
     assert isinstance(top_words, pd.DataFrame)
-    
-    centers, clusters = clustering_on_wordvecs(Z, 1);
-    centroid_map = dict(zip(model.wv.index2word, clusters));
-    top_words = get_top_words(model.wv.index2word, 30, centers, Z);
 
 #     print(cluster_num)
     wc = WordCloud(background_color="white", max_words=200, max_font_size=80, colormap=cmap);
@@ -558,23 +480,19 @@ def generate_tag_suggestions(scores, tags, threshold = 0.5):
                 
     return results
 
-def visualize_similarity_table(tags, model):
-    """""
-    
-     :param tags: list of stress keywords 
+def visualize_similarity_table(tags):
+ """""
+     
+     :param tags: list of  tags
      :type tags: list
-     :returns: dataframe
      """
     assert isinstance(tags,list)
-    assert model != None
     tables = [];
     for tag in tags:
         tables.append(get_word_table(model.wv.similar_by_word(tag), tag, show_sim=False))
 
     similarity_table = pd.concat(tables, axis=1)
     return similarity_table
-
-    
 
 
 
