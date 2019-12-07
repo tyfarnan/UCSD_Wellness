@@ -10,17 +10,6 @@ import math
 from matplotlib import pyplot as plt
 from matplotlib.patches import ConnectionPatch
 
-def loadData(path):
-    '''
-    read data from several csv files
-    param path(str): the directory of data files
-    return: dataframe
-    '''
-    assert isinstance(path,str)
-    files = glob.glob(path+'/*.csv')
-    df=pd.concat([pd.read_csv(f) for f in files])
-    return df
-
 def tag_num_category(tags):
     '''
     category confessions by how many tags they have 
@@ -63,12 +52,11 @@ def splitDataByTag(confessions):
     tags=sorted(tags,reverse=True)
     return tags
 
-def preprocess_data(path='data'):
+def preprocess_data(confessions):
     '''
     load data, add 'tag' and 'tag_num' columns to dataframe
     '''
-    assert isinstance(path,str)
-    confessions=loadData(path)
+    assert isinstance(confessions, pd.DataFrame)
     confessions['tags']=confessions.tags.apply(tag_process)
     confessions['tag_num']=confessions.tags.apply(tag_num_category)
     return confessions
@@ -81,7 +69,7 @@ def func(pct, allvals):
     absolute = int(pct/100.*np.sum(allvals))
     return "{:.1f}%".format(pct, absolute)
 
-def tag_num_plot(confessions):
+def tag_num_plot(confessions, file=None):
     '''
     plot confessions count by tag_num
     '''
@@ -99,9 +87,10 @@ def tag_num_plot(confessions):
           bbox_to_anchor=(1, 0, 0.5, 1))
     plt.setp(autotexts, size=12, weight="bold")
     plt.title('Confessions Count by Tag Numbers')
+    if file: plt.savefig(file)
     plt.show()
 
-def tag_plot(confessions):
+def tag_plot(confessions, file=None):
     '''
     plot confessions count by tag
     '''
@@ -116,10 +105,14 @@ def tag_plot(confessions):
     plt.xlabel('Tags')
     plt.ylabel('Count')
     plt.title('Confessions Count by Tags')
+    if file: plt.savefig(file)
     plt.show()
 
 if __name__ == "__main__":
-    confessions=preprocess_data()
+    # test functionality
+    from load_data import load_data
+    df=load_data()
+    confessions=preprocess_data(df)
     #tag number plot
     tag_num_plot(confessions)
     #tag frequency

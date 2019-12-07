@@ -1,0 +1,14 @@
+#Functions from others files
+from sentiment_classifier_plot import*
+from sentiment_classifier_plot import school_calendar_timestamp
+from sentiment_classifier_plot import load_sentiment_dict
+from sentiment_classifier_plot import pre_process
+from sentiment_classifier_plot import sentiment_plot
+from sentiment_classifier_plot import neg_pos_plot
+from sentiment_classifier_plot import weekday_diff_senti_plot
+from tag import preprocess_data
+from tag import tag_num_plot
+from tag import tag_plot
+
+confessions=preprocess_data()
+

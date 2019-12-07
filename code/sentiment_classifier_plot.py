@@ -42,6 +42,8 @@ from nltk.corpus import stopwords
 import math
 from matplotlib import pyplot as plt
 
+weekdays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+
 #extract useful information
 def loadData(path='data'):
     '''
@@ -173,7 +175,7 @@ def hour_plot(confessions):
     #fig.savefig('hour.png')
     plt.show()
     
-def weekday_plot(confessions):
+def weekday_plot(confessions, file=None):
     '''
     plot confessions count in each weekday
     type confessions: dataframe
@@ -184,10 +186,11 @@ def weekday_plot(confessions):
     ax.plot(list(weekday_distri.index),weekday_distri.values)
     ax.set(xlabel='Weekday', ylabel='Count',title='Confessions Count by Weekday')
     #ax.grid()
-    #fig.savefig("weekday.png")
+    # fig.savefig("weekday.png")
+    if file: plt.savefig(file)
     plt.show()
 
-def week_plot(confessions):
+def week_plot(confessions, file=None):
     '''
     plot confessions count in each week
     type confessions: dataframe
@@ -201,10 +204,11 @@ def week_plot(confessions):
     simple_X=[X[i] for i in range(len(X)) if i%5==0]
     ax.xaxis.set_ticks(simple_X)
     #ax.grid()
-    #fig.savefig('year-week.png')
+    # fig.savefig('year-week.png')
+    if file: plt.savefig(file)
     plt.show()
 
-def month_plot(confessions):
+def month_plot(confessions, file=None):
     '''
     plot confessions count in each month
     type confessions: dataframe
@@ -218,20 +222,20 @@ def month_plot(confessions):
     #simple_X=[X[i] for i in range(len(X)) if i%2==0]
     #ax.xaxis.set_ticks(simple_X)
     #ax.grid()
-    #fig.savefig('year-month.png')
+    # fig.savefig('year-month.png')
+    if file: plt.savefig(file)
     plt.show()
 
-def pre_process(sentiments_of_word,path='data'):
+def pre_process(sentiments_of_word, confessions):
     '''
     load data and add caracter columns to dataframe
     '''
-    assert isinstance(path,str)
-    confessions=loadData(path)
+    assert isinstance(confessions, pd.DataFrame)
     confessions=confessions.loc[:,['timestamp','content']]
     confessions['content_processed']=confessions.content.apply(normalization)
     confessions['sentiment']=confessions.content_processed.apply(sentiment_category,word_senti=sentiments_of_word)
     confessions['pos_neg']=confessions.content_processed.apply(two_class_sentiment_category,word_senti=sentiments_of_word)
-    confessions['timestamp']=pd.to_datetime(confessions.timestamp)
+    confessions['timestamp']=confessions.index
     confessions['ts']=confessions.timestamp.values.astype(np.int64)
     confessions['yr-week']=confessions.timestamp.dt.strftime('%y-%W')
     confessions['hour']=confessions.timestamp.dt.strftime('%H')
@@ -316,8 +320,10 @@ def weekday_diff_senti_plot(confessions):
     plot the trend of three emotions'count in each weekday 
     '''
     assert isinstance(confessions,pd.DataFrame)
-    confessions['week_d']=confessions.timestamp.dt.strftime('%a')
-    confessions['week_d']=pd.Categorical(confessions['weekday'],categories=['Mon','Tue','Wed','Thu','Fri'],ordered=True)
+    # confessions['week_d']=confessions.index.strftime('%a')
+    confessions['week_d']=confessions.index.weekday
+    confessions['week_d']=confessions['week_d'].apply(lambda day: weekdays[day])
+    confessions['week_d']=pd.Categorical(confessions['week_d'],categories=weekdays[:-2],ordered=True)
     joy=confessions.loc[confessions.sentiment=='joy'].groupby('week_d')['content'].count().sort_index()
     fear=confessions.loc[confessions.sentiment=='fear'].groupby('week_d')['content'].count().sort_index()
     anger=confessions.loc[confessions.sentiment=='anger'].groupby('week_d')['content'].count().sort_index()
@@ -328,7 +334,7 @@ def weekday_diff_senti_plot(confessions):
     p2=plt.plot(list(fear.index),fear.values,label='fear',color='y')
     p3=plt.plot(list(anger.index),anger.values,label='anger',color='r')
     plt.xlabel('Weekday')
-    plt.xticks(['Mon','Tue','Wed','Thu','Fri'])
+    # plt.xticks(['Mon','Tue','Wed','Thu','Fri'])
     plt.ylabel('Count (Normalized)')
     plt.title('Confessions Count of Different Emotions by Weekday')
     #plt.grid()
@@ -337,10 +343,25 @@ def weekday_diff_senti_plot(confessions):
 
 
 if __name__ == "__main__":
+    # test functionality
+    from load_data import load_data
+    df=load_data()
     school_calendar=school_calendar_timestamp()
-    sentiments_of_word=load_sentiment_dict()
-    confessions=pre_process(sentiments_of_word)
+
+    import pickle
+    try:
+        sentiments_of_word, confessions = pickle.load( open( 'sentiments_cache.dat', "rb" ) )
+        print("Loaded previous cached data...")
+    except FileNotFoundError:
+        print("Previous data not found.")
+        sentiments_of_word=load_sentiment_dict()
+        confessions=pre_process(sentiments_of_word, df)
+        pickle.dump(    (sentiments_of_word, confessions), 
+                        open( 'sentiments_cache.dat', "wb" ) )
+        print('Loaded data...')
+
     sentiment_plot(confessions)
+
     neg_pos_plot(confessions)
     weekday_diff_senti_plot(confessions)
    
