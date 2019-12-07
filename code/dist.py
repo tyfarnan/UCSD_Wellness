@@ -2,10 +2,7 @@ import pandas as pd
 import pandas.api.types as ptypes
 import matplotlib.pyplot as plt
 from matplotlib.ticker import LinearLocator
-from matplotlib.ticker import MaxNLocator
-from matplotlib.ticker import AutoLocator
 import datetime as dt
-import seaborn as sn
 
 strptime=dt.datetime.strptime
 strftime=dt.datetime.strftime

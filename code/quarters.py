@@ -1,20 +1,17 @@
 import datetime as dt
 import pandas as pd
-import seaborn as sns
 import string
+import re
 
-from load_data import load_data
-from load_data import load_calendar
-from load_data import load_corpus
-from dist import add_extra_time_units
-from dist import histogram
-from dist import plot_histogram
-from dist import plot_custom
-from dist import plot_weekday_dist
-from dist import plot_hourly_dist
-from dist import submissions_over_time
-from dist import label_macro_size
-from dist import auto_reindex_lut
+from code.dist import add_extra_time_units
+from code.dist import histogram
+from code.dist import plot_histogram
+from code.dist import plot_custom
+from code.dist import plot_weekday_dist
+from code.dist import plot_hourly_dist
+from code.dist import submissions_over_time
+from code.dist import label_macro_size
+from code.dist import auto_reindex_lut
 
 def get_quarter_start_end(quarter):
   try: mask_begin = quarter['start'] # try official start
@@ -22,7 +19,7 @@ def get_quarter_start_end(quarter):
   mask_end = quarter['end'] # get end of quarter (after finales)
   return (mask_begin, mask_end)
 
-def hist_hourly_quarter_edges(df, calendar, span):
+def hist_hourly_quarter_edges(df, calendar, span=3):
   quarter_spans = list(map(get_quarter_start_end, calendar))
 
   df_front_list = list(map(lambda s: df.loc[s[0]:s[0]+dt.timedelta(weeks=span)], quarter_spans))
@@ -37,7 +34,7 @@ def hist_hourly_quarter_edges(df, calendar, span):
   hist_comb.columns=['First '+str(span)+' Weeks', 'Last '+str(span)+' Weeks']
   return hist_comb
 
-def hist_hourly_weekday_weeked(df):
+def hist_hourly_weekday_weekend(df):
   weekday_indexes = range(0, 4) # monday-thursday
   weekend_indexes = range(4, 7) # friday-sunday
 
@@ -54,9 +51,7 @@ def count_words(words, content):
   filtered = list(map(lambda x: x.strip().translate(str.maketrans('', '', string.punctuation)), content.split()))
   return sum(map(lambda word: word in words, filtered))
 
-import re
 def keywords_over_quarters(corpus, calendar, df, title=None, file=None, colors=['lightgrey', 'tab:red', 'tab:green'], show=True):
-  
   df_total = pd.DataFrame(columns=['content', 'words'])
   # challenge: merge multiple quarters together
   for quarter in calendar:
@@ -96,6 +91,9 @@ if __name__ == "__main__":
   # DEMO of this module
 
   import glob
+  from load_data import load_data
+  from load_data import load_calendar
+  from load_data import load_corpus
   from load_data import load_cache
   
   df, calendar = load_cache()
@@ -110,7 +108,7 @@ if __name__ == "__main__":
   dist = submissions_over_time(df, show=False)
 
   # plot hourly distribution for different parts of the quarter
-  hist_comb = hist_hourly_quarter_edges(df, calendar, 3)
+  hist_comb = hist_hourly_quarter_edges(df, calendar, span=3)
   plot_custom(hist_comb, 'line', 
                 title='Hourly Submissions During Start vs End of Quarter', 
                 file='hist_hourly_quarter_edges', xlabel='Hour', ylabel='Count',
@@ -118,10 +116,10 @@ if __name__ == "__main__":
                 show=False)
 
   # plot hourly distribution for different parts of the week
-  hist_comb = hist_hourly_weekday_weeked(df)
+  hist_comb = hist_hourly_weekday_weekend(df)
   plot_custom(hist_comb, 'line', 
                 title='Hourly Submissions Over the Weekdays', 
-                file='hist_hourly_weekday_weeked', xlabel='Hour', ylabel='Count',
+                file='hist_hourly_weekday_weekend', xlabel='Hour', ylabel='Count',
                 colors=['tab:red', 'tab:green'],
                 show=False)
 
