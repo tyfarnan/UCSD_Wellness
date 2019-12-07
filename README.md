@@ -4,6 +4,10 @@
 **Summary:** Hello! This repository contains a jupyter notebook demonstration of exploratory sentiment analysis on UCSD Confessions, an anomyous online forum for students.
 
 
+## Dataset
+
+[UCSD Confessions Public Archive](https://drive.google.com/drive/folders/1vTfogzYi7MC1p0tpkEeBMRFgqNnYm8Wl?usp=sharing)
+
 ## Third Party Modules Used
 
 Numpy, Pandas, Matplotlib, Seaborn, Glob, NLTK, TextBlob, Scikit-learn, Gensim, Wordcloud
@@ -40,6 +44,7 @@ for example:
 ` $ python load_data.py `
 
 ## How to run code:
+
 1. Clone the repo
 2. Install all the necessary third party modules and dependancies
 3. **Please see main.ipynb for full usage details**
