@@ -1,5 +1,5 @@
 __pycache__
 *.dat
-.vscode
-.ipynb_checkpoints
-Final_Tyler
+.vscode/
+.ipynb_checkpoints/
+Final_Tyler/
