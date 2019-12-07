@@ -18,7 +18,7 @@ import numpy as np
 
 from gensim.models.word2vec import LineSentence
 from nltk.corpus import subjectivity
-nltk.download('vader_lexicon')
+nltk.download('vader_lexicon', quiet=True)
 # first, we import the relevant modules from the NLTK library
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
@@ -43,10 +43,10 @@ from itertools import cycle;
 
 from nltk.corpus.reader import WordListCorpusReader
 from nltk.corpus.reader.api import *
-nltk.download('opinion_lexicon')
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
+nltk.download('opinion_lexicon', quiet=True)
+nltk.download('stopwords', quiet=True)
+nltk.download('punkt', quiet=True)
+nltk.download('averaged_perceptron_tagger', quiet=True)
 from nltk.corpus import opinion_lexicon
 from nltk.corpus import stopwords
 
@@ -147,7 +147,7 @@ def prepare_confessions(confessions):
     print('Total time: ' + str((time.time() - start)) + ' secs')
 
     extra_clean_txt_file = r"./data/extra_clean_comments.txt"
-    extra_clean_csv_file = r"extra_clean_comments.csv"
+    extra_clean_csv_file = r"./data/extra_clean_comments.csv"
 
     clean_confessions = txt_to_csv(extra_clean_txt_file, extra_clean_csv_file, header=None)
     clean_content = clean_confessions[0].tolist()
@@ -185,7 +185,7 @@ def compute_pos_neg_scores(clean_content):
     output.close()
     return None
 
-def compute_VAD_scores(clean_content, vad_lex):
+def compute_VAD_scores(clean_content):
     """""
 
     :param clean_content: pre-processed confessions
@@ -299,7 +299,7 @@ def plot_vad_weekday_scores(confessions, vadfile='data/all_VAD_scores.pkl', nltk
     plt.xticks(index,list(weekday_valence_sum.index))
     plt.legend()
     plt.title('Valence, Arousal, and Dominance over typical Week ')
-    fig.savefig("weekday.png")
+    fig.savefig("output/weekday.png")
     plt.show()
     return None
 
@@ -371,7 +371,7 @@ def plot_nltk_vader_scores(confessions):
     plt.title('Polarity of Confessions Over 24 Hours')
     plt.legend(loc=1, prop={'size':12 })
     # plt.xticks(np.arange(12), calendar.month_name[1:13], rotation=20)
-    fig.savefig("weekday_nltk_vader.png")
+    fig.savefig("output/weekday_nltk_vader.png")
     plt.show()
     return None
 
@@ -399,8 +399,8 @@ def train_word2vec(csv_filename_string, num_f, min_wc, ctxt,ds):
     
     start = time.time();
     #Set the logging format to get some basic updates.
-    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',\
-        level=logging.INFO)
+    # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',\
+    #     level=logging.INFO)
     # Set values for various parameters
     num_features = num_f;    # Dimensionality of the hidden layer representation
     min_word_count = min_wc;   # Minimum word count to keep a word in the vocabulary
@@ -418,7 +418,7 @@ def train_word2vec(csv_filename_string, num_f, min_wc, ctxt,ds):
     # init_sims will make the model more memory efficient by normalizing the vectors in-place.
     model.init_sims(replace=True);
     # Save the model
-    model_name = "model_"+str(csv_filename_string);
+    model_name = str(csv_filename_string);
     model.save(model_name);
     print('Total time: ' + str((time.time() - start)) + ' secs')
     return model

@@ -7,6 +7,19 @@
 
 Numpy, Pandas, Matplotlib, Seaborn, Glob, NLTK, TextBlob, Scikit-learn, Gensim, Wordcloud
 
+## Requirements for Sentiment Analysis:
+
+To run the sentiment analysis portion, extra features are needed:
+```
+$ python -m textblob.download_corpora
+```
+
+Then run python and download the data set:
+```
+>>> import nltk
+>>> nltk.download('stopwords')
+```
+
 ## File Stucture
 
 This repo is broken down into multiple folders.
@@ -24,15 +37,7 @@ This repo is broken down into multiple folders.
 for example:
 ` $ python load_data.py `
 
-## Requirements for Sentiment Analysis:
-
-To run the sentiment analysis portion, extra features are needed:
-```
-$ python -m textblob.download_corpora
-```
-
-Then run python and download the data set:
-```
->>> import nltk
->>> nltk.download('stopwords')
-```
+## How to run code:
+1. Clone the repo
+2. Install all the necessary third party modules and dependancies
+3. **Please see main.ipynb for full usage details**
