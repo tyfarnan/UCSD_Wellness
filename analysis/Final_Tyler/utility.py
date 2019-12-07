@@ -1,3 +1,5 @@
+import warnings
+warnings.filterwarnings('ignore')
 #Import Modules
 import nltk
 import random
@@ -18,7 +20,7 @@ import numpy as np
 
 from gensim.models.word2vec import LineSentence
 from nltk.corpus import subjectivity
-nltk.download('vader_lexicon')
+nltk.download('vader_lexicon', quiet=True)
 # first, we import the relevant modules from the NLTK library
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
@@ -43,10 +45,10 @@ from itertools import cycle;
 
 from nltk.corpus.reader import WordListCorpusReader
 from nltk.corpus.reader.api import *
-nltk.download('opinion_lexicon')
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
+nltk.download('opinion_lexicon', quiet=True)
+nltk.download('stopwords', quiet=True)
+nltk.download('punkt', quiet=True)
+nltk.download('averaged_perceptron_tagger', quiet=True)
 from nltk.corpus import opinion_lexicon
 from nltk.corpus import stopwords
 
@@ -399,8 +401,8 @@ def train_word2vec(csv_filename_string, num_f, min_wc, ctxt,ds):
     
     start = time.time();
     #Set the logging format to get some basic updates.
-    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',\
-        level=logging.INFO)
+#     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',\
+#         level=logging.INFO)
     # Set values for various parameters
     num_features = num_f;    # Dimensionality of the hidden layer representation
     min_word_count = min_wc;   # Minimum word count to keep a word in the vocabulary
