@@ -139,10 +139,10 @@ def prepare_confessions(confessions):
     assert isinstance(confessions, pd.DataFrame)
     
     confessions['timestamp']=pd.to_datetime(confessions.timestamp)
-    confessions['weekday']=confessions.timestamp.apply(lambda x: x.strftime('%a'))
+    confessions['weekday']=confessions.timestamp.dt.strftime('%a')
     confessions['weekday']=pd.Categorical(confessions['weekday'],categories=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],ordered=True)
     
-    start = time.time()
+    start = time.time();
     clean_text(confessions['content'], './data/extra_clean_comments.txt')
     print('Total time: ' + str((time.time() - start)) + ' secs')
 
@@ -196,7 +196,7 @@ def compute_VAD_scores(clean_content, vad_lex):
     
     #setup vars for VAD lexicon load
     vad_text_file = r"./data/NRC-VAD-Lexicon.txt"
-    vad_csv_file = r"./data/vad_lex.csv"
+    vad_csv_file = r"vad_lex.csv"
     vad_lex = txt_to_csv(vad_text_file, vad_csv_file, header=0)
     
     #NRC VAD lexicon
@@ -237,7 +237,7 @@ def compute_nltk_vader_scores(clean_content):
     output.close()
     return None
 
-def plot_vad_weekday_scores(confessions, vadfile='data/all_VAD_scores.pkl', nltkfile='data/all_nltk_vader_scores.pkl'): 
+def plot_vad_weekday_scores(confessions): 
     """""
 
     :param clean_content: pre-processed confessions
@@ -247,14 +247,14 @@ def plot_vad_weekday_scores(confessions, vadfile='data/all_VAD_scores.pkl', nltk
 #     assert isinstance(new,pd.DataFrame)
     assert isinstance(confessions, pd.DataFrame)
     
-    pkl_file = open(vadfile, 'rb')
+    pkl_file = open('all_VAD_scores.pkl', 'rb')
     all_VAD_scores = pickle.load(pkl_file)
     pkl_file.close()
 
     temp_VAD = pd.DataFrame.from_dict(all_VAD_scores, orient='index', columns=['Valence','Arousal','Dominance'])
     new = pd.concat([confessions,temp_VAD],axis=1)
     
-    pkl_file = open(nltkfile, 'rb')
+    pkl_file = open('all_nltk_vader_scores.pkl', 'rb')
     all_nltk_vader_scores = pickle.load(pkl_file)
     pkl_file.close()
     
@@ -312,14 +312,14 @@ def plot_nltk_vader_scores(confessions):
     """
     assert isinstance(confessions,pd.DataFrame)
     
-    pkl_file = open('data/all_VAD_scores.pkl', 'rb')
+    pkl_file = open('all_VAD_scores.pkl', 'rb')
     all_VAD_scores = pickle.load(pkl_file)
     pkl_file.close()
 
     temp_VAD = pd.DataFrame.from_dict(all_VAD_scores, orient='index', columns=['Valence','Arousal','Dominance'])
     new = pd.concat([confessions,temp_VAD],axis=1)
     
-    pkl_file = open('data/all_nltk_vader_scores.pkl', 'rb')
+    pkl_file = open('all_nltk_vader_scores.pkl', 'rb')
     all_nltk_vader_scores = pickle.load(pkl_file)
     pkl_file.close()
     
@@ -567,7 +567,7 @@ def visualize_similarity_table(tags, model):
      """
     assert isinstance(tags,list)
     assert model != None
-    tables = []
+    tables = [];
     for tag in tags:
         tables.append(get_word_table(model.wv.similar_by_word(tag), tag, show_sim=False))
 
