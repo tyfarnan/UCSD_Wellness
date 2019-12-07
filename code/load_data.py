@@ -89,7 +89,7 @@ def load_calendar(file=default['calendar']):
         pass
   return quarters
 
-def data_cache(cache_file='cache.dat'):
+def load_cache(cache_file='cache.dat'):
   '''
   cache wrapper excel and json files for faster startup
 
