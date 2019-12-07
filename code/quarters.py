@@ -14,12 +14,36 @@ from code.dist import label_macro_size
 from code.dist import auto_reindex_lut
 
 def get_quarter_start_end(quarter):
+  '''
+  returns the start and end dates of a quarter
+
+  :param quarter: dict entry of a particular quarter
+  :type quarter: dict
+  :return: tuple(start, end)
+  '''
+  assert isinstance(quarter, dict)
   try: mask_begin = quarter['start'] # try official start
   except: mask_begin = quarter['begins'] # else use instruction start
   mask_end = quarter['end'] # get end of quarter (after finales)
   return (mask_begin, mask_end)
 
 def hist_hourly_quarter_edges(df, calendar, span=3):
+  '''
+  compares entries spanning the beginning vs end of the average quarter
+  by hour of the day
+
+  :param df: confessions with timestamp index
+  :type df: pandas DataFrame
+  :param calendar: list of dict entries of quarters
+  :type calendar: list
+  :param span: number of weeks to span on either end
+  :type span: int
+  :return: pandas Series
+  '''
+  assert isinstance(df, pd.DataFrame)
+  assert isinstance(calendar, list)
+  assert isinstance(span, int)
+
   quarter_spans = list(map(get_quarter_start_end, calendar))
 
   df_front_list = list(map(lambda s: df.loc[s[0]:s[0]+dt.timedelta(weeks=span)], quarter_spans))
@@ -35,6 +59,17 @@ def hist_hourly_quarter_edges(df, calendar, span=3):
   return hist_comb
 
 def hist_hourly_weekday_weekend(df):
+  '''
+  compares entries on weekdays vs weekends
+  by hour of the day
+  note: friday is defined as a weekend day
+
+  :param df: confessions with timestamp index
+  :type df: pandas DataFrame
+  :return: pandas Series
+  '''
+  assert isinstance(df, pd.DataFrame)
+
   weekday_indexes = range(0, 4) # monday-thursday
   weekend_indexes = range(4, 7) # friday-sunday
 
@@ -48,10 +83,41 @@ def hist_hourly_weekday_weekend(df):
   return hist_comb
 
 def count_words(words, content):
+  '''
+  counts how many times words from a given corpus can be found in a submission
+
+  :param words: corpus of words to use
+  :type words: list of str
+  :param content: string format of confessions content
+  :type content: str
+  :return: int count
+  '''
+  assert isinstance(words, list)
+  assert isinstance(content, str)
+
   filtered = list(map(lambda x: x.strip().translate(str.maketrans('', '', string.punctuation)), content.split()))
   return sum(map(lambda word: word in words, filtered))
 
 def keywords_over_quarters(corpus, calendar, df, title=None, file=None, colors=['lightgrey', 'tab:red', 'tab:green'], show=True):
+  '''
+  finds and plots the instances of corpus words over an average quarter
+
+  :param corpus: corpus of words to use
+  :type corpus: list of str
+  :param calendar: list of dict entries of quarters
+  :type calendar: list
+  :param df: confessions with timestamp index
+  :type df: pandas DataFrame
+  :param title: title of plot (optional)
+  :type title: str
+  :param file: filename to save plot (optional)
+  :type file: str
+  :param colors: set of colors to use for plot (optional)
+  :type colors: list of str
+  :param show: show the plot interactively (optional)
+  :type show: bool
+  :return: normalized histogram in DataFrame use to plot the graph
+  '''
   df_total = pd.DataFrame(columns=['content', 'words'])
   # challenge: merge multiple quarters together
   for quarter in calendar:
@@ -88,7 +154,8 @@ def keywords_over_quarters(corpus, calendar, df, title=None, file=None, colors=[
 
 
 if __name__ == "__main__":
-  # DEMO of this module
+
+  # DEMO code of this module.
 
   import glob
   from load_data import load_data
