@@ -135,6 +135,7 @@ def plot_weekday_dist(df, keywords=None, title='Submissions per Weekday', file='
   :type df: pandas DataFrame
   :return: None
   '''
+  assert isinstance(df, pd.DataFrame)
   return plot_histogram(df, 'weekday', title=title, file=file, show=show)
 
 def plot_hourly_dist(df, keywords=None, title='Submissions per Hour of Day', file='dist_hourly.png', show=show_plots):
@@ -145,6 +146,7 @@ def plot_hourly_dist(df, keywords=None, title='Submissions per Hour of Day', fil
   :type df: pandas DataFrame
   :return: None
   '''
+  assert isinstance(df, pd.DataFrame)
   return plot_histogram(df, 'hour', title=title, file=file, show=show)
 
 def plot_custom(df, plot_type, extra_func=None, colors=None, title=None, file=None, xlabel=None, ylabel=None, show=show_plots):
