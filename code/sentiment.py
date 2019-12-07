@@ -276,7 +276,7 @@ def split_quarter(timestamp):
 
     
     
-def sentiment_plot(confessions):
+def sentiment_plot(confessions, file=None):
     '''
     plot confessions count of each sentiment
     '''
@@ -291,9 +291,10 @@ def sentiment_plot(confessions):
     red_patch = mpatches.Patch(color='tab:red', label='Negative')
     blue_patch = mpatches.Patch(color='tab:blue', label='Positive')
     plt.legend(handles=[red_patch,blue_patch],prop={'size':15})
+    if file: plt.savefig(file)
     plt.show()
 
-def neg_pos_plot(confessions):
+def neg_pos_plot(confessions, file=None):
     '''
     plot confessions count of each basic sentiment
     '''
@@ -305,6 +306,7 @@ def neg_pos_plot(confessions):
     plt.xlabel('Basic Emotions')
     plt.title('Confessions Count by Basic Emotions')
     
+    if file: plt.savefig(file)
     plt.show()
 
 def normalize_series(s):
@@ -315,7 +317,7 @@ def normalize_series(s):
     total_num=s.sum()
     s=s/total_num
     return s
-def weekday_diff_senti_plot(confessions):
+def weekday_diff_senti_plot(confessions, file=None):
     '''
     plot the trend of three emotions'count in each weekday 
     '''
@@ -339,6 +341,7 @@ def weekday_diff_senti_plot(confessions):
     plt.title('Confessions Count of Different Emotions by Weekday')
     #plt.grid()
     plt.legend(title='Emotions')
+    if file: plt.savefig(file)
     plt.show()
 
 
