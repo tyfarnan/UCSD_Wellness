@@ -187,7 +187,7 @@ def compute_pos_neg_scores(clean_content):
     output.close()
     return None
 
-def compute_VAD_scores(clean_content, vad_lex):
+def compute_VAD_scores(clean_content):
     """""
 
     :param clean_content: pre-processed confessions
